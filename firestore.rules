@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net & Catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Is valid UUID-like or alpha-numeric ID
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Helper validation for Recipe inputs
+    function isValidRecipe(data) {
+      return data.keys().hasAll(['tipoAnimal', 'titulo', 'descricao', 'ingredientes', 'modoPreparo', 'beneficios', 'geradaPorIA'])
+        && data.keys().size() <= 9
+        && data.tipoAnimal is string && data.tipoAnimal.size() <= 64
+        && data.titulo is string && data.titulo.size() <= 128
+        && data.descricao is string && data.descricao.size() <= 512
+        && data.ingredientes is list
+        && data.ingredientes.size() > 0 && data.ingredientes.size() <= 30
+        && data.modoPreparo is string && data.modoPreparo.size() <= 3000
+        && data.beneficios is string && data.beneficios.size() <= 1000
+        && data.geradaPorIA is bool;
+    }
+
+    match /recipes/{recipeId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() 
+        && isValidId(recipeId) 
+        && isValidRecipe(incoming());
+      allow update: if isSignedIn()
+        && isValidId(recipeId)
+        && isValidRecipe(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['titulo', 'descricao', 'ingredientes', 'modoPreparo', 'beneficios']);
+      allow delete: if isSignedIn();
+    }
+  }
+}

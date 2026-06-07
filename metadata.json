@@ -1,0 +1,6 @@
+{
+  "name": "Petzy",
+  "description": "SaaS de gestão de saúde para qualquer tipo de pet com logo e identidade visual moderna.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

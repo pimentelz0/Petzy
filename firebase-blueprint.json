@@ -1,0 +1,51 @@
+{
+  "entities": {
+    "recipe": {
+      "title": "Healthy Pet Recipe",
+      "description": "Safe, veterinarian-formulated recipes for various species of domestic pets",
+      "type": "object",
+      "properties": {
+        "tipoAnimal": {
+          "type": "string",
+          "description": "Species classification of the pet (Cachorro, Gato, Pássaro, Coelho, Hamster, Peixe)"
+        },
+        "titulo": {
+          "type": "string",
+          "description": "Descriptive and engaging title of the recipe"
+        },
+        "descricao": {
+          "type": "string",
+          "description": "Short summary or description of the diet dish"
+        },
+        "ingredientes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of precise safe ingredients for the recipe"
+        },
+        "modoPreparo": {
+          "type": "string",
+          "description": "Detailed step-by-step instructions text of how to prepare the recipe"
+        },
+        "beneficios": {
+          "type": "string",
+          "description": "Crucial health or medical advantage of this diet composition"
+        },
+        "criadoEm": {
+          "type": "string",
+          "description": "Record creation date and time"
+        },
+        "geradaPorIA": {
+          "type": "boolean",
+          "description": "True if generated using Gemini AI, false if pre-seeded"
+        }
+      },
+      "required": ["tipoAnimal", "titulo", "descricao", "ingredientes", "modoPreparo", "beneficios", "geradaPorIA"]
+    }
+  },
+  "firestore": {
+    "/recipes/{recipeId}": {
+      "schema": "recipe",
+      "description": "Durable Firestore collection representing individual healthy recipes"
+    }
+  }
+}
